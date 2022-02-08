@@ -1,0 +1,11 @@
+tqdm
+Flask
+Werkzeug
+numpy
+torch
+torchvision
+opencv-python
+matplotlib
+Pillow
+vietocr
+paddleocr

@@ -1,0 +1,1 @@
+label_dict = {0: 'oxygenmeter', 1: 'prescription', 2: 'receipt', 3: 'scales', 4: 'sphygmomanometer', 5: 'thermometer'}
