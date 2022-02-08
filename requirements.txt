@@ -9,3 +9,5 @@ matplotlib
 Pillow
 vietocr
 paddleocr
+requests
+craft-text-detector

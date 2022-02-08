@@ -1,42 +1,11 @@
 import os
-import numpy as np
-from PIL import Image
 from flask import Flask, render_template, request, flash, json
 from werkzeug.utils import secure_filename
+import requests
 
-import torch
-import torch.nn as nn
-import numpy as np
-import torchvision
-from torchvision import datasets, models, transforms
-from torch.autograd import Variable
-
-# VietOCR
-from PIL import Image
-from vietocr.tool.config import Cfg
-from vietocr.tool.predictor import Predictor
-from paddleocr import PaddleOCR
-
-from classifier_network import Resnet18Network
-from config import CHECKPOINT
-from constant import label_dict
-
+from config import *
+from utils import *
 from thermometer import thermometer
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Load VietOCR model
-print("Loading VietOCR and PaddleOCR models...")
-config = Cfg.load_config_from_name('vgg_transformer')
-config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
-config['cnn']['pretrained'] = False
-config['device'] = device
-config['predictor']['beamsearch'] = False
-
-vietocr_predictor = Predictor(config)
-paddle_detector = PaddleOCR(lang='en')
-print("VietOCR and PaddleOCR model loaded success!")
-
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './static/images'
@@ -46,40 +15,11 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 app = Flask(__name__)
 
-# @app.route("/")
-# def main():
-#     return render_template('index.html')
-model_path = './checkpoints/'
-class_names = [value for value in label_dict.values()]
+# LOAD MODELS
+classifier_model = load_classifier_model()
+vietocr_predictor = load_vietocr_model()
+paddle_detector = load_paddleocr_model()
 
-# load model
-def load_model():
-    print("Loading classifier model...")
-    num_classes = len(class_names)
-    model = Resnet18Network(num_classes)
-    model = model.to(device)
-    checkpoint = torch.load(CHECKPOINT)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    model.eval()
-
-    return model
-
-# LOAD MODEL
-model = load_model()
-print("Classifier model loaded success!")
-
-def load_img(img_path):
-    data_transform = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
-    image = Image.open(img_path)
-    image = data_transform(image).float()
-    image.unsqueeze_(dim=0)
-    image = Variable(image)
-    return image
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -109,29 +49,43 @@ def predict():
             result = dict()
 
             filename = secure_filename(file.filename)
-            filepath = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(filepath)
-            img = load_img(filepath)
-            img = img.to(device)
-            output = model(img)
-            _, preds = torch.max(output, 1)
-            classifier_result_number = preds.tolist()[0]
-            classifier_result = label_dict[classifier_result_number]
+            img_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(img_path)
+            
+            classifier_result_number, classifier_result = get_classifier_results(img_path)
 
             result['classifier_result'] = classifier_result
+            result['classifier_number'] = classifier_result_number
 
             if classifier_result_number == 0:
                 print("oxygenmeter api")
+
             elif classifier_result_number == 1:
-                print("prescription")
+                try:
+                    dictToSend = {'file': file}
+                    res = requests.post(PRESCRIPTION_API, json=dictToSend)
+                    ocr_result = res.json()
+                except:
+                    ocr_result = "prescription"
+                result['ocr_result'] = ocr_result
+
             elif classifier_result_number == 2:
-                print("receipt")
+                try:
+                    dictToSend = {'file': file}
+                    res = requests.post(RECEIPT_API, json=dictToSend)
+                    ocr_result = res.json()
+                except:
+                    ocr_result = "receipt"
+                result['ocr_result'] = ocr_result
+
             elif classifier_result_number == 3:
                 print("scales")
+
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
+
             elif classifier_result_number == 5:
-                ocr_result = thermometer(filepath, vietocr_predictor, paddle_detector)
+                ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result'] = ocr_result
 
             response = app.response_class(
