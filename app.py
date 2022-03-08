@@ -57,9 +57,11 @@ def predict():
             result['classifier_result'] = classifier_result
             result['classifier_number'] = classifier_result_number
 
+            # Oxygenmeter
             if classifier_result_number == 0:
                 print("oxygenmeter api")
 
+            # Prescription
             elif classifier_result_number == 1:
                 try:
                     dictToSend = {'file': file}
@@ -69,6 +71,7 @@ def predict():
                     ocr_result = "prescription"
                 result['ocr_result'] = ocr_result
 
+            # Receipts
             elif classifier_result_number == 2:
                 try:
                     dictToSend = {'file': file}
@@ -78,12 +81,15 @@ def predict():
                     ocr_result = "receipt"
                 result['ocr_result'] = ocr_result
 
+            # Scale
             elif classifier_result_number == 3:
                 print("scales")
 
+            # Sphygmomanometer
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
 
+            # Thermometer
             elif classifier_result_number == 5:
                 ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result'] = ocr_result

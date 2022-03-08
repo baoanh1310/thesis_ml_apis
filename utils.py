@@ -51,7 +51,7 @@ def load_classifier_model():
 
     return model
 
-def preprocess_classifier_image(img_path):
+def _preprocess_classifier_image(img_path):
     data_transform = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -66,7 +66,7 @@ def preprocess_classifier_image(img_path):
 
 def get_classifier_results(img_path):
     classifier_model = load_classifier_model()
-    img = preprocess_classifier_image(img_path)
+    img = _preprocess_classifier_image(img_path)
     img = img.to(device)
 
     output = classifier_model(img)
