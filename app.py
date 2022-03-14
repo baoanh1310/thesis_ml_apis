@@ -71,26 +71,16 @@ def predict():
                     ocr_result = "prescription"
                 result['ocr_result'] = ocr_result
 
-            # Receipts
-            elif classifier_result_number == 2:
-                try:
-                    dictToSend = {'file': file}
-                    res = requests.post(RECEIPT_API, json=dictToSend)
-                    ocr_result = res.json()
-                except:
-                    ocr_result = "receipt"
-                result['ocr_result'] = ocr_result
-
             # Scale
-            elif classifier_result_number == 3:
+            elif classifier_result_number == 2:
                 print("scales")
 
             # Sphygmomanometer
-            elif classifier_result_number == 4:
+            elif classifier_result_number == 3:
                 print("sphygmomanometer")
 
             # Thermometer
-            elif classifier_result_number == 5:
+            elif classifier_result_number == 4:
                 ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result'] = ocr_result
 

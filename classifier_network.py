@@ -17,3 +17,14 @@ class Resnet18Network(nn.Module):
         x = self.model(x)
         # return F.normalize(x, p=2, dim=1)
         return x
+    
+class SqueezeNet(nn.Module):
+    def __init__(self, num_classes):
+        super(SqueezeNet, self).__init__()
+        self.num_classes = num_classes
+        self.model = models.squeezenet1_0(pretrained=True)
+        self.model.classifier[1] = nn.Conv2d(512, num_classes, kernel_size=(1,1), stride=(1,1))
+    
+    def forward(self, x):
+        x = self.model(x)
+        return x

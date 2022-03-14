@@ -12,7 +12,7 @@ import copy
 from tqdm import tqdm
 import argparse
 
-from classifier_network import Resnet18Network
+from classifier_network import Resnet18Network, SqueezeNet
 
 def eval_folder(data_dir, mode, model_dir):
 
@@ -20,7 +20,8 @@ def eval_folder(data_dir, mode, model_dir):
         num_classes = len(os.listdir(os.path.join(data_dir, mode)))
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        model = Resnet18Network(num_classes)
+        # model = Resnet18Network(num_classes)
+        model = SqueezeNet(num_classes)
         model = model.to(device)
 
         criterion = nn.CrossEntropyLoss()
