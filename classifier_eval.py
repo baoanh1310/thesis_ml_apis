@@ -12,7 +12,7 @@ import copy
 from tqdm import tqdm
 import argparse
 
-from classifier_network import Resnet18Network, SqueezeNet
+from classifier_network import Resnet18Network, SqueezeNet, MobileNetV3Small
 
 def eval_folder(data_dir, mode, model_dir):
 

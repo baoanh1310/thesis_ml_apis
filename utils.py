@@ -36,8 +36,8 @@ def load_paddleocr_model():
     return paddle_detector
 
 def load_classifier_model():
-    from classifier_network import Resnet18Network
-    from config import CLASSIFIER_CHECKPOINT
+    from classifier_network import Resnet18Network, SqueezeNet, MobileNetV3Small
+    from config import CLASSIFIER_CHECKPOINT, SQUEEZENET_CHECKPOINT, MOBILENET_CHECKPOINT
 
     print("Loading classifier model...")
     class_names = [value for value in label_dict.values()]

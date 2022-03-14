@@ -28,3 +28,14 @@ class SqueezeNet(nn.Module):
     def forward(self, x):
         x = self.model(x)
         return x
+
+class MobileNetV3Small(nn.Module):
+    def __init__(self, num_classes):
+        super(MobileNetV3Small, self).__init__()
+        self.num_classes = num_classes
+        self.model = models.mobilenet_v3_small(pretrained=True)
+        self.model.classifier[3] = nn.Linear(1024, num_classes, bias=True)
+        
+    def forward(self, x):
+        x = self.model(x)
+        return x
