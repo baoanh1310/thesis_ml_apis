@@ -6,6 +6,7 @@ import requests
 from config import *
 from utils import *
 from thermometer import thermometer
+from oxygenmeter import oxygenmeter
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './static/images'
@@ -19,7 +20,8 @@ app = Flask(__name__)
 classifier_model = load_classifier_model()
 vietocr_predictor = load_vietocr_model()
 paddle_detector = load_paddleocr_model()
-
+# load CRAFT models
+refine_net, craft_net = load_craft_models()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -59,7 +61,8 @@ def predict():
 
             # Oxygenmeter
             if classifier_result_number == 0:
-                print("oxygenmeter api")
+                ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
+                result['ocr_result'] = ocr_result
 
             # Prescription
             elif classifier_result_number == 1:

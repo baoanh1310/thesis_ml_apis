@@ -78,3 +78,17 @@ def get_classifier_results(img_path, classifier_model):
     classifier_result = label_dict[classifier_result_number]
 
     return classifier_result_number, classifier_result
+
+def load_craft_models():
+    print("Loading CRAFT models...")
+    # import craft functions
+    from craft_text_detector import (
+        load_craftnet_model,
+        load_refinenet_model,
+    )
+    # load models
+    refine_net = load_refinenet_model(cuda=False)
+    craft_net = load_craftnet_model(cuda=False)
+    print("CRAFT models loaded success!")
+
+    return refine_net, craft_net
