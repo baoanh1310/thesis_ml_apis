@@ -11,7 +11,11 @@ def thermometer(img_path, predictor, detector):
     img = cv2.imread(img_path)
     max_area = 0
 
-    OUTPUT_PATH = 'output_nhietke.png'
+    OUTPUT_DIR = os.path.join('output', 'nhietke')
+    if not os.path.exists(OUTPUT_DIR):
+        os.mkdir(OUTPUT_DIR)
+
+    OUTPUT_PATH = os.path.join(OUTPUT_DIR, '{}.png'.format(len(os.listdir(OUTPUT_DIR))))
 
     for i, box in enumerate(text_detection):
         top_left     = (int(box[0][0]), int(box[0][1]))
@@ -50,6 +54,6 @@ def thermometer(img_path, predictor, detector):
         print("Cannot casting to numeric value")
 
     # delete output image
-    os.remove(OUTPUT_PATH)
+    # os.remove(OUTPUT_PATH)
     
     return result
