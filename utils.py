@@ -42,9 +42,11 @@ def load_classifier_model():
     print("Loading classifier model...")
     class_names = [value for value in label_dict.values()]
     num_classes = len(class_names)
-    model = Resnet18Network(num_classes)
+    # model = Resnet18Network(num_classes)
+    model = SqueezeNet(num_classes)
     model = model.to(device)
-    checkpoint = torch.load(CLASSIFIER_CHECKPOINT)
+    # checkpoint = torch.load(CLASSIFIER_CHECKPOINT)
+    checkpoint = torch.load(SQUEEZENET_CHECKPOINT, map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     print("Classifier model loaded success!")
@@ -64,8 +66,8 @@ def _preprocess_classifier_image(img_path):
     image = Variable(image)
     return image
 
-def get_classifier_results(img_path):
-    classifier_model = load_classifier_model()
+def get_classifier_results(img_path, classifier_model):
+    # classifier_model = load_classifier_model()
     img = _preprocess_classifier_image(img_path)
     img = img.to(device)
 

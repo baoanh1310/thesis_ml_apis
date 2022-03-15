@@ -52,7 +52,7 @@ def predict():
             img_path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(img_path)
             
-            classifier_result_number, classifier_result = get_classifier_results(img_path)
+            classifier_result_number, classifier_result = get_classifier_results(img_path, classifier_model)
 
             result['classifier_result'] = classifier_result
             result['classifier_number'] = classifier_result_number
