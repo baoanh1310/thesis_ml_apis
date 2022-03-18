@@ -5,7 +5,7 @@ import requests
 
 from config import *
 from utils import *
-from thermometer import thermometer
+from thermometer import thermometer, thermometer_new
 from oxygenmeter import oxygenmeter
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -84,7 +84,8 @@ def predict():
 
             # Thermometer
             elif classifier_result_number == 4:
-                ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
+                ocr_result = thermometer_new(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result'] = ocr_result
 
             response = app.response_class(
