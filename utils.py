@@ -18,6 +18,7 @@ def load_vietocr_model():
     # Load VietOCR model
     print("Loading VietOCR model...")
     config = Cfg.load_config_from_name('vgg_transformer')
+    config['vocab'] = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~ '
     config['weights'] = VIETOCR_CHECKPOINT
     config['cnn']['pretrained'] = False
     config['device'] = device
