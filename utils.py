@@ -5,7 +5,7 @@ from torch.autograd import Variable
 import numpy as np
 from PIL import Image
 
-from constant import label_dict
+from constant import label_dict, CLASSIFIER_THRESHOLD
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -75,7 +75,10 @@ def get_classifier_results(img_path, classifier_model):
     img = img.to(device)
 
     output = classifier_model(img)
-    _, preds = torch.max(output, 1)
+    values, preds = torch.max(output, 1)
+    value = values.tolist()[0]
+    if value < CLASSIFIER_THRESHOLD:
+        return 100, 'unknown'
     classifier_result_number = preds.tolist()[0]
     classifier_result = label_dict[classifier_result_number]
 
