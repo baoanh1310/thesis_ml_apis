@@ -59,13 +59,16 @@ def predict():
             result['classifier_result'] = classifier_result
             result['classifier_number'] = classifier_result_number
 
-            # Oxygenmeter
+            # ECG
             if classifier_result_number == 0:
+                print("ECG")
+            # Oxygenmeter
+            elif classifier_result_number == 1:
                 ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
                 result['ocr_result'] = ocr_result
 
             # Prescription
-            elif classifier_result_number == 1:
+            elif classifier_result_number == 2:
                 try:
                     dictToSend = {'file': file}
                     res = requests.post(PRESCRIPTION_API, json=dictToSend)
@@ -75,15 +78,15 @@ def predict():
                 result['ocr_result'] = ocr_result
 
             # Scale
-            elif classifier_result_number == 2:
+            elif classifier_result_number == 3:
                 print("scales")
 
             # Sphygmomanometer
-            elif classifier_result_number == 3:
+            elif classifier_result_number == 4:
                 print("sphygmomanometer")
 
             # Thermometer
-            elif classifier_result_number == 4:
+            elif classifier_result_number == 5:
                 # ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
                 ocr_result = thermometer_new(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result'] = ocr_result
