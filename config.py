@@ -1,5 +1,6 @@
 CLASSIFIER_CHECKPOINT='./checkpoints/classifier.pt'
 SQUEEZENET_CHECKPOINT='./checkpoints/squeezenet_classifier.pt'
 MOBILENET_CHECKPOINT='./checkpoints/mobilenet_classifier.pt'
+RESNET34_CHECKPOINT='./checkpoints/resnet34_classifier.pt'
 PRESCRIPTION_API='http://bk-ocr.ai/pill/predict/'
 VIETOCR_CHECKPOINT='./checkpoints/vietocr.pth'

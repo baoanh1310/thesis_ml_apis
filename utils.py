@@ -37,16 +37,18 @@ def load_paddleocr_model():
     return paddle_detector
 
 def load_classifier_model():
-    from classifier_network import Resnet18Network, SqueezeNet, MobileNetV3Small
-    from config import CLASSIFIER_CHECKPOINT, SQUEEZENET_CHECKPOINT, MOBILENET_CHECKPOINT
+    from classifier_network import Resnet18Network, SqueezeNet, MobileNetV3Small, Resnet34Network
+    from config import CLASSIFIER_CHECKPOINT, SQUEEZENET_CHECKPOINT, MOBILENET_CHECKPOINT, RESNET34_CHECKPOINT
 
     print("Loading classifier model...")
     class_names = [value for value in label_dict.values()]
     num_classes = len(class_names)
-    model = Resnet18Network(num_classes)
+    model = Resnet34Network(num_classes)
+    # model = Resnet18Network(num_classes)
     # model = SqueezeNet(num_classes)
     model = model.to(device)
-    checkpoint = torch.load(CLASSIFIER_CHECKPOINT)
+    checkpoint = torch.load(RESNET34_CHECKPOINT)
+    # checkpoint = torch.load(CLASSIFIER_CHECKPOINT)
     # checkpoint = torch.load(SQUEEZENET_CHECKPOINT, map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
