@@ -39,3 +39,16 @@ class MobileNetV3Small(nn.Module):
     def forward(self, x):
         x = self.model(x)
         return x
+    
+class Resnet34Network(nn.Module):
+    def __init__(self, num_classes):
+        super(Resnet34Network, self).__init__()
+        self.num_classes = num_classes
+        self.model = models.resnet34(pretrained=True)
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, num_classes)
+        
+    def forward(self, x):
+        x = self.model(x)
+        # return F.normalize(x, p=2, dim=1)
+        return x
