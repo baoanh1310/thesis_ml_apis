@@ -7,6 +7,7 @@ from config import *
 from utils import *
 from thermometer import thermometer, thermometer_new
 from oxygenmeter import oxygenmeter
+from scale import scale
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './static/images'
@@ -79,7 +80,9 @@ def predict():
 
             # Scale
             elif classifier_result_number == 3:
-                print("scales")
+                # print("scales")
+                ocr_result = scale(img_path, vietocr_predictor, paddle_detector)
+                result['ocr_result'] = ocr_result
 
             # Sphygmomanometer
             elif classifier_result_number == 4:

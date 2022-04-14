@@ -20,6 +20,7 @@ def load_vietocr_model():
     config = Cfg.load_config_from_name('vgg_transformer')
     config['vocab'] = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~ '
     config['weights'] = VIETOCR_CHECKPOINT
+#    config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
     config['cnn']['pretrained'] = False
     config['device'] = device
     config['predictor']['beamsearch'] = False
