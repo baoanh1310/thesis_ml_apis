@@ -113,4 +113,9 @@ def thermometer_new(img_path, predictor, detector):
         results.append(str(txt))
     except:
         results.append('')
-    return results[0]
+    result = results[0]
+    try:
+        result = float(result)
+    except:
+        result = 0.0
+    return result

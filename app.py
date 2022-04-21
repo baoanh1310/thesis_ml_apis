@@ -29,12 +29,24 @@ def allowed_file(filename):
 
 @app.route('/predict/',methods=['POST'])
 def predict():
+    res = dict()
+    res['appStatus'] = 0
+    result = { 'ocr_result': {} }
+    res['data'] = { 
+        'result': result
+    }
+    failed_res = {
+        'appStatus': -1,
+        'data': {}
+    }
     if request.method == 'POST':
         print("Request: ", request.files)
         if 'file' not in request.files:
             flash('No key "file"')
+            # res['appStatus'] = -1
             return app.response_class(
-                response=json.dumps('No key "file"', cls=NpEncoder),
+                #response=json.dumps('No key "file"', cls=NpEncoder),
+                response=json.dumps(failed_res, cls=NpEncoder),
                 status=500,
                 mimetype='application/json'
             )
@@ -42,14 +54,16 @@ def predict():
         file = request.files['file']
         if file.filename == '':
             flash('No file selected for uploading')
+            # res['appStatus'] = -1
             return app.response_class(
-                response=json.dumps('No file selected for uploading'),
-                status=500,
+                # response=json.dumps('No file selected for uploading'),
+                response=json.dumps(failed_res, cls=NpEncoder),
+		status=500,
                 mimetype='application/json'
             )
         # if file and allowed_file(file.filename):
         if file:
-            result = dict()
+            # result = dict()
 
             filename = secure_filename(file.filename)
             img_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -57,17 +71,18 @@ def predict():
             
             classifier_result_number, classifier_result = get_classifier_results(img_path, classifier_model)
 
-            result['classifier_result'] = classifier_result
+            # result['classifier_result'] = classifier_result
             result['classifier_number'] = classifier_result_number
-            result['ocr_result'] = ''
+            # result['ocr_result'] = 0.0
 
             # ECG
             if classifier_result_number == 0:
                 print("ECG")
+                result['ocr_result']['ecg_result'] = [0 for i in range(12*504)] # temporary empty return array shape (12x504 elements)
             # Oxygenmeter
             elif classifier_result_number == 1:
                 ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
-                result['ocr_result'] = ocr_result
+                result['ocr_result']['oxygenmeter_result'] = ocr_result
 
             # Prescription
             elif classifier_result_number == 2:
@@ -76,27 +91,44 @@ def predict():
                     res = requests.post(PRESCRIPTION_API, json=dictToSend)
                     ocr_result = res.json()
                 except:
-                    ocr_result = "prescription"
-                result['ocr_result'] = ocr_result
+                    ocr_result = {
+                        "name": "",
+                        "drugs": [
+                            {
+                                "price": 0,
+                                "quantity": 0,
+                                "drug_name": ""
+                            }
+                        ]
+                    }
+                result['ocr_result']['prescription_result'] = ocr_result
 
             # Scale
             elif classifier_result_number == 3:
                 # print("scales")
                 ocr_result = scale(img_path, vietocr_predictor, paddle_detector)
-                result['ocr_result'] = ocr_result
+                result['ocr_result']['scale_result'] = ocr_result
 
             # Sphygmomanometer
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
+                ocr_result = 120 # temporary value
+                result['ocr_result']['sphygmomanometer_result'] = ocr_result
 
             # Thermometer
             elif classifier_result_number == 5:
                 # ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
                 ocr_result = thermometer_new(img_path, vietocr_predictor, paddle_detector)
-                result['ocr_result'] = ocr_result
+                result['ocr_result']['thermometer_result'] = ocr_result
+                
+            # Unknown
+            elif classifier_result_number == 100:
+                ocr_result = ""
+                result['ocr_result']['unknown_result'] = ocr_result
 
+            res['data']['result'] = result
             response = app.response_class(
-                response=json.dumps(result, cls=NpEncoder),
+                response=json.dumps(res, cls=NpEncoder),
                 status=200,
                 mimetype='application/json'
             )
