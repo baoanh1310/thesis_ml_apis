@@ -59,6 +59,7 @@ def predict():
 
             result['classifier_result'] = classifier_result
             result['classifier_number'] = classifier_result_number
+            result['ocr_result'] = ''
 
             # ECG
             if classifier_result_number == 0:
