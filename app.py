@@ -8,6 +8,7 @@ from utils import *
 from thermometer import thermometer, thermometer_new
 from oxygenmeter import oxygenmeter
 from scale import scale
+from ecg import ecg
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = './static/images'
@@ -78,7 +79,7 @@ def predict():
             # ECG
             if classifier_result_number == 0:
                 print("ECG")
-                result['ocr_result']['ecg_result'] = [0 for i in range(12*504)] # temporary empty return array shape (12x504 elements)
+                result['ocr_result']['ecg_result'] = ecg(img_path) # return array shape (12x504 elements)
             # Oxygenmeter
             elif classifier_result_number == 1:
                 ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
