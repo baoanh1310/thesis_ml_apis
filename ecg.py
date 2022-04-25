@@ -185,8 +185,12 @@ def ecg(img_path):
     
     # flatten sig to 1-dim python list
     res = sig.flatten()
-    res = res.toList()
+    res = res.tolist()
     
     return res
+
+if __name__ == "__main__":
+    res = ecg('./ecg.jpg')
+    print(res.shape)
 
 

@@ -28,6 +28,10 @@ refine_net, craft_net = load_craft_models()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/', methods=['GET'])
+def default():
+    return "Icebear"
+
 @app.route('/predict/',methods=['POST'])
 def predict():
     res = dict()
@@ -80,6 +84,7 @@ def predict():
             if classifier_result_number == 0:
                 print("ECG")
                 result['ocr_result']['ecg_result'] = ecg(img_path) # return array shape (12x504 elements)
+                print(len(result['ocr_result']['ecg_result']))
             # Oxygenmeter
             elif classifier_result_number == 1:
                 ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
@@ -158,4 +163,4 @@ class NpEncoder(json.JSONEncoder):
 if __name__ == "__main__":
     # Run app
     app.secret_key = 'ICEBEAR'
-    app.run(host="0.0.0.0", port=5123, debug=False)
+    app.run(host="0.0.0.0", port=5011, debug=False)
