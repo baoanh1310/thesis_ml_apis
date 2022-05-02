@@ -2,10 +2,10 @@ POST http://localhost:5011/predict/
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="file"; filename="output_nhietke.png"
-Content-Type: image/png
+Content-Disposition: form-data; name="file"; filename="ecg.jpg"
+Content-Type: image/jpg
 
-< ./output_nhietke2.png
+< ./ecg.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###

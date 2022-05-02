@@ -2,6 +2,8 @@ import os
 from flask import Flask, render_template, request, flash, json
 from werkzeug.utils import secure_filename
 import requests
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from config import *
 from utils import *
@@ -17,6 +19,22 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app = Flask(__name__)
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    failed_res = {
+        'appStatus': -1,
+        'data': {}
+    }
+    return make_response(
+                failed_res,
+                429,
+            )
 
 # LOAD MODELS
 classifier_model = load_classifier_model()
@@ -29,6 +47,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET'])
+@limiter.limit("1/minute")
 def default():
     return "Icebear"
 

@@ -187,7 +187,14 @@ def ecg(img_path):
     res = sig.flatten()
     res = res.tolist()
     
-    return res
+    #return res
+    result = dict()
+    result['I'] = sig[0].tolist(); result['II'] = sig[1].tolist(); result['III'] = sig[2].tolist()
+    result['aVR'] = sig[3].tolist(); result['aVL'] = sig[4].tolist(); result['aVF'] = sig[5].tolist()
+    result['V1'] = sig[6].tolist(); result['V2'] = sig[7].tolist(); result['V3'] = sig[8].tolist()
+    result['V4'] = sig[9].tolist(); result['V5'] = sig[10].tolist(); result['V6'] = sig[11].tolist()
+    
+    return result
 
 if __name__ == "__main__":
     res = ecg('./ecg.jpg')
