@@ -137,7 +137,10 @@ def predict():
             # Sphygmomanometer
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
-                ocr_result = 120 # temporary value
+                # temporary value
+                ocr_result = {
+                    "blood_pressure": 120
+                }
                 result['ocr_result']['sphygmomanometer_result'] = ocr_result
 
             # Thermometer

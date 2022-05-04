@@ -138,7 +138,7 @@ def remove_redundant_lead(im, gap=40):
                 pass
     return im_ 
 
-def digitization(im, w=16, h=80, fs=20):
+def digitization(im, w=16, h=80, fs=200):
     im = im[:, 20:im.shape[1]-20]
     hist = histogram(im, 0)
     bl = np.argmax(hist)
@@ -151,11 +151,12 @@ def digitization(im, w=16, h=80, fs=20):
         else:
             mag = bl
         sig.append(mag)
-    sig = (np.array(sig) - bl)/h
+    sig = (np.array(sig) - bl)/h + 1
 
     n_samples = int(fs*im.shape[1]/w)
     sig = resample(sig, n_samples)
     return 1-sig
+
 
 def ecg(img_path):
     img = read_img(img_path)
