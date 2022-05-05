@@ -138,7 +138,7 @@ def remove_redundant_lead(im, gap=40):
                 pass
     return im_ 
 
-def digitization(im, w=16, h=80, fs=200):
+def digitization(im, w=16, h=80, fs=20):
     im = im[:, 20:im.shape[1]-20]
     hist = histogram(im, 0)
     bl = np.argmax(hist)
