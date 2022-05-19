@@ -33,7 +33,8 @@ def load_vietocr_model():
 def load_paddleocr_model():
     from paddleocr import PaddleOCR
     print("Loading PaddleOCR model...")
-    paddle_detector = PaddleOCR(lang='en')
+    # paddle_detector = PaddleOCR(lang='en')
+    paddle_detector = PaddleOCR(lang='ch', use_angle_cls=True)
     print("PaddleOCR model loaded success!")
 
     return paddle_detector
@@ -65,7 +66,7 @@ def _preprocess_classifier_image(img_path):
         transforms.ToTensor(),
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ])
-    image = Image.open(img_path)
+    image = Image.open(img_path).convert('RGB')
     image = data_transform(image).float()
     image.unsqueeze_(dim=0)
     image = Variable(image)

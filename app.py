@@ -7,9 +7,10 @@ from flask_limiter.util import get_remote_address
 
 from config import *
 from utils import *
-from thermometer import thermometer, thermometer_new
-from oxygenmeter import oxygenmeter
-from scale import scale
+from thermometer import thermometer, thermometer_new, thermometer_moi
+from oxygenmeter import oxygenmeter, oxygenmeter_new
+from huyetap import huyetap
+from scale import scale, scale_new
 from ecg import ecg
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -19,35 +20,35 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 app = Flask(__name__)
-limiter = Limiter(
-    app,
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
-)
+# limiter = Limiter(
+#     app,
+#     key_func=get_remote_address,
+#     default_limits=["200 per day", "50 per hour"]
+# )
 
-@app.errorhandler(429)
-def ratelimit_handler(e):
-    failed_res = {
-        'appStatus': -1,
-        'data': {}
-    }
-    return make_response(
-                failed_res,
-                429,
-            )
+# @app.errorhandler(429)
+# def ratelimit_handler(e):
+#     failed_res = {
+#         'appStatus': -1,
+#         'data': {}
+#     }
+#     return make_response(
+#                 failed_res,
+#                 429,
+#             )
 
 # LOAD MODELS
 classifier_model = load_classifier_model()
 vietocr_predictor = load_vietocr_model()
 paddle_detector = load_paddleocr_model()
 # load CRAFT models
-refine_net, craft_net = load_craft_models()
+# refine_net, craft_net = load_craft_models()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET'])
-@limiter.limit("1/minute")
+# @limiter.limit("1/minute")
 def default():
     return "Icebear"
 
@@ -106,7 +107,11 @@ def predict():
                 print(len(result['ocr_result']['ecg_result']))
             # Oxygenmeter
             elif classifier_result_number == 1:
-                ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
+                # ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
+                ocr_result = { "oxygen": 0.0, "blood_pressure": 0.0 }
+                ocr_result["oxygen"] = oxygenmeter_new(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result = oxygenmeter_new(img_path, vietocr_predictor, paddle_detector)
+                
                 result['ocr_result']['oxygenmeter_result'] = ocr_result
 
             # Prescription
@@ -131,22 +136,25 @@ def predict():
             # Scale
             elif classifier_result_number == 3:
                 # print("scales")
-                ocr_result = scale(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result = scale(img_path, vietocr_predictor, paddle_detector)
+                ocr_result = scale_new(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result']['scale_result'] = ocr_result
 
             # Sphygmomanometer
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
                 # temporary value
-                ocr_result = {
-                    "blood_pressure": 120
-                }
+                # ocr_result = {
+                #     "blood_pressure": 120
+                # }
+                ocr_result = huyetap(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result']['sphygmomanometer_result'] = ocr_result
 
             # Thermometer
             elif classifier_result_number == 5:
                 # ocr_result = thermometer(img_path, vietocr_predictor, paddle_detector)
-                ocr_result = thermometer_new(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result = thermometer_new(img_path, vietocr_predictor, paddle_detector)
+                ocr_result = thermometer_moi(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result']['thermometer_result'] = ocr_result
                 
             # Unknown
