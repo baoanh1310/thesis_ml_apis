@@ -4,10 +4,12 @@ from torchvision import transforms
 from torch.autograd import Variable
 import numpy as np
 from PIL import Image
+import cv2
 
 from constant import label_dict, CLASSIFIER_THRESHOLD
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 def load_vietocr_model():
     from PIL import Image
@@ -100,3 +102,17 @@ def load_craft_models():
     print("CRAFT models loaded success!")
 
     return refine_net, craft_net
+
+def scale_image_size(img_path, ratio=1.0):
+    img = cv2.imread(img_path)
+    width = int(img.shape[1] * ratio)
+    height = int(img.shape[0] * ratio)
+    dim = (width, height)
+    img = cv2.resize(img, dim)
+    return img
+
+def sort_coord_detected_boxes(boxes):
+    results = []
+    for i, box in enumerate(boxes):
+        top_left = (int(box[0][0]), int(box[0][1]))
+        print("Top left: ", top_left)

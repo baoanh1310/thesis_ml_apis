@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 from PIL import Image
+from utils import scale_image_size
 
 def thermometer(img_path, predictor, detector):
     # Read image
@@ -125,7 +126,8 @@ def thermometer_moi(img_path, predictor, detector):
     results = []
     text_detection = detector.ocr(img_path, rec=False, cls=True)
 
-    img = cv2.imread(img_path)
+    # img = cv2.imread(img_path)
+    img = scale_image_size(img_path)
     max_area = 0
 
     nhietdo_result = '0'

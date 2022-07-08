@@ -4,11 +4,14 @@ from PIL import Image
 import numpy as np
 from tqdm import tqdm
 
+from utils import scale_image_size
+
 def huyetap(img_path, predictor, detector):
     results = []
     text_detection = detector.ocr(img_path, rec=False, cls=True)
 
-    img = cv2.imread(img_path)
+    # img = cv2.imread(img_path)
+    img = scale_image_size(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     # img = Image.open(img_path).convert('RGB')
     # img = np.asarray(img)
@@ -45,7 +48,7 @@ def huyetap(img_path, predictor, detector):
         txt = ''.join(char_arr)
         try:
             txt = float(txt)
-            if txt > 140:
+            if txt > 160:
                 txt = txt / 10
             results.append(txt)
         except:

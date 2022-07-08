@@ -144,10 +144,10 @@ def predict():
             elif classifier_result_number == 4:
                 print("sphygmomanometer")
                 # temporary value
-                # ocr_result = {
-                #     "blood_pressure": 120
-                # }
-                ocr_result = huyetap(img_path, vietocr_predictor, paddle_detector)
+                ocr_result = {
+                    "blood_pressure": huyetap(img_path, vietocr_predictor, paddle_detector)
+                }
+                # ocr_result = huyetap(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result']['sphygmomanometer_result'] = ocr_result
 
             # Thermometer
