@@ -25,10 +25,12 @@ def load_vietocr_model():
 #    config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
     config['cnn']['pretrained'] = False
     config['device'] = device
+    # config['device'] = torch.device('cpu')
     config['predictor']['beamsearch'] = False
     
     vietocr_predictor = Predictor(config)
     print("VietOCR model loaded success!")
+    print("VietOCR device: ", config['device'])
 
     return vietocr_predictor
 
@@ -112,7 +114,19 @@ def scale_image_size(img_path, ratio=1.0):
     return img
 
 def sort_coord_detected_boxes(boxes):
-    results = []
-    for i, box in enumerate(boxes):
-        top_left = (int(box[0][0]), int(box[0][1]))
-        print("Top left: ", top_left)
+    results = sorted(boxes, key=lambda x: x[0][0])
+    # results = sorted(results, key=lambda x: x[0][1])
+    return results
+
+def sort_detected_boxes_by_area(boxes):
+    def area(box):
+        width = abs(box[0][0] - box[2][0])
+        height = abs(box[0][1] - box[2][1])
+        return width * height
+    
+    results = sorted(boxes, key=lambda x: area(x), reverse=True)
+    return results
+
+def sort_detected_boxes_top_down(boxes):
+    results = sorted(boxes, key=lambda x: x[0][1])
+    return results

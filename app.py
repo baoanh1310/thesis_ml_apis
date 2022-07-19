@@ -8,8 +8,8 @@ from flask_limiter.util import get_remote_address
 from config import *
 from utils import *
 from thermometer import thermometer, thermometer_new, thermometer_moi
-from oxygenmeter import oxygenmeter, oxygenmeter_new
-from huyetap import huyetap
+from oxygenmeter import oxygenmeter, oxygenmeter_new, oxygenmeter_best
+from huyetap import huyetap, huyetap_best
 from scale import scale, scale_new
 from ecg import ecg
 
@@ -108,9 +108,13 @@ def predict():
             # Oxygenmeter
             elif classifier_result_number == 1:
                 # ocr_result = oxygenmeter(img_path, refine_net, craft_net, vietocr_predictor)
-                ocr_result = { "oxygen": 0.0, "blood_pressure": 0.0 }
-                ocr_result["oxygen"] = oxygenmeter_new(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result = { "oxygen": 0.0, "blood_pressure": 0.0 }
+                # ocr_result = { "oxygen": 0.0, "heart_rate": 0.0 }
+                # ocr_result["oxygen"] = oxygenmeter_new(img_path, vietocr_predictor, paddle_detector)
+                # ocr_result["oxygen"] = oxygenmeter_best(img_path, vietocr_predictor, paddle_detector)
                 # ocr_result = oxygenmeter_new(img_path, vietocr_predictor, paddle_detector)
+                ocr_result = oxygenmeter_best(img_path, vietocr_predictor, paddle_detector)
+                print("Oxygenmeter: ", ocr_result)
                 
                 result['ocr_result']['oxygenmeter_result'] = ocr_result
 
@@ -142,11 +146,12 @@ def predict():
 
             # Sphygmomanometer
             elif classifier_result_number == 4:
-                print("sphygmomanometer")
                 # temporary value
-                ocr_result = {
-                    "blood_pressure": huyetap(img_path, vietocr_predictor, paddle_detector)
-                }
+                # ocr_result = {
+                #     "blood_pressure": huyetap_best(img_path, vietocr_predictor, paddle_detector)
+                # }
+                ocr_result = huyetap_best(img_path, vietocr_predictor, paddle_detector)
+                print("Sphygmomanometer: ", ocr_result)
                 # ocr_result = huyetap(img_path, vietocr_predictor, paddle_detector)
                 result['ocr_result']['sphygmomanometer_result'] = ocr_result
 
